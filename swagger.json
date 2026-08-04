@@ -1,0 +1,518 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tournament Manager API",
+    "version": "1.0.0",
+    "description": "REST API for managing football tournaments and teams.",
+    "contact": {
+      "name": "Emiliano Rivero"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Tournaments",
+      "description": "Tournament CRUD operations"
+    },
+    {
+      "name": "Teams",
+      "description": "Team CRUD operations"
+    }
+  ],
+  "paths": {
+    "/tournaments": {
+      "get": {
+        "tags": ["Tournaments"],
+        "summary": "Get all tournaments",
+        "responses": {
+          "200": {
+            "description": "Tournament list returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tournament"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tournaments"],
+        "summary": "Create a tournament",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TournamentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tournament created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/tournaments/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/DocumentId"
+        }
+      ],
+      "get": {
+        "tags": ["Tournaments"],
+        "summary": "Get a tournament by ID",
+        "responses": {
+          "200": {
+            "description": "Tournament returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tournaments"],
+        "summary": "Update a tournament",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TournamentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tournament updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tournaments"],
+        "summary": "Delete a tournament",
+        "responses": {
+          "200": {
+            "description": "Tournament deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/teams": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "Get all teams",
+        "responses": {
+          "200": {
+            "description": "Team list returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Team"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Teams"],
+        "summary": "Create a team",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Team created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/teams/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/DocumentId"
+        }
+      ],
+      "get": {
+        "tags": ["Teams"],
+        "summary": "Get a team by ID",
+        "responses": {
+          "200": {
+            "description": "Team returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Teams"],
+        "summary": "Update a team",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Team updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Teams"],
+        "summary": "Delete a team",
+        "responses": {
+          "200": {
+            "description": "Team deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "DocumentId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "MongoDB document ID",
+        "schema": {
+          "type": "string",
+          "example": "64f1234567890abcdef12345"
+        }
+      }
+    },
+    "schemas": {
+      "TournamentInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "season",
+          "country",
+          "startDate",
+          "endDate",
+          "organizer"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Uruguayan Championship"
+          },
+          "season": {
+            "type": "string",
+            "example": "2026"
+          },
+          "country": {
+            "type": "string",
+            "example": "Uruguay"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-02-01"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-12-15"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "active",
+              "completed",
+              "cancelled"
+            ],
+            "example": "active"
+          },
+          "organizer": {
+            "type": "string",
+            "example": "Uruguayan Football Association"
+          },
+          "participatingTeams": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": []
+          }
+        }
+      },
+      "Tournament": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TournamentInput"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "TeamInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "city",
+          "country",
+          "foundedYear",
+          "stadium",
+          "coach",
+          "league",
+          "website"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Montevideo Lions"
+          },
+          "city": {
+            "type": "string",
+            "example": "Montevideo"
+          },
+          "country": {
+            "type": "string",
+            "example": "Uruguay"
+          },
+          "foundedYear": {
+            "type": "integer",
+            "minimum": 1850,
+            "example": 2020
+          },
+          "stadium": {
+            "type": "string",
+            "example": "Rivera Stadium"
+          },
+          "coach": {
+            "type": "string",
+            "example": "Martin Silva"
+          },
+          "league": {
+            "type": "string",
+            "example": "Uruguayan First Division"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/montevideo-lions"
+          }
+        }
+      },
+      "Team": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TeamInput"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid ID or request data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

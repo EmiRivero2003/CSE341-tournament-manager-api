@@ -1,0 +1,35 @@
+### Get all tournaments
+GET http://localhost:8080/tournaments
+
+### Create a tournament
+POST http://localhost:8080/tournaments
+Content-Type: application/json
+
+{
+  "name": "Uruguayan Championship",
+  "season": "2026",
+  "country": "Uruguay",
+  "startDate": "2026-02-01",
+  "endDate": "2026-12-15",
+  "status": "active",
+  "organizer": "Uruguayan Football Association",
+  "participatingTeams": []
+}
+
+### Get all teams
+GET http://localhost:8080/teams
+
+### Create a team
+POST http://localhost:8080/teams
+Content-Type: application/json
+
+{
+  "name": "Montevideo Lions",
+  "city": "Montevideo",
+  "country": "Uruguay",
+  "foundedYear": 2020,
+  "stadium": "Rivera Stadium",
+  "coach": "Martin Silva",
+  "league": "Uruguayan First Division",
+  "website": "https://example.com/montevideo-lions"
+}
