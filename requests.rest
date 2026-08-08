@@ -33,3 +33,143 @@ Content-Type: application/json
   "league": "Uruguayan First Division",
   "website": "https://example.com/montevideo-lions"
 }
+
+### Create second team for matches
+POST http://localhost:8080/teams
+Content-Type: application/json
+
+{
+  "name": "Punta del Este Sharks",
+  "city": "Punta del Este",
+  "country": "Uruguay",
+  "foundedYear": 2021,
+  "stadium": "Maldonado Stadium",
+  "coach": "Diego Fernandez",
+  "league": "Uruguayan First Division",
+  "website": "https://example.com/punta-del-este-sharks"
+}
+
+### Create an invalid player - validation test
+POST http://localhost:8080/players
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "V",
+  "dateOfBirth": "2030-01-01",
+  "nationality": "",
+  "position": "striker",
+  "shirtNumber": 120,
+  "team": "invalid-id"
+}
+
+### Create a valid player
+POST http://localhost:8080/players
+Content-Type: application/json
+
+{
+  "firstName": "Federico",
+  "lastName": "Valverde",
+  "dateOfBirth": "1998-07-22",
+  "nationality": "Uruguay",
+  "position": "midfielder",
+  "shirtNumber": 8,
+  "team": "6a779080d6db9c706fe88b14",
+  "status": "active"
+}
+
+### Get player by ID
+GET http://localhost:8080/players/6a7790add6db9c706fe88b15
+
+### Update player
+PUT http://localhost:8080/players/6a7790add6db9c706fe88b15
+Content-Type: application/json
+
+{
+  "firstName": "Federico",
+  "lastName": "Valverde",
+  "dateOfBirth": "1998-07-22",
+  "nationality": "Uruguay",
+  "position": "midfielder",
+  "shirtNumber": 15,
+  "team": "6a779080d6db9c706fe88b14",
+  "status": "active"
+}
+
+### Delete player
+DELETE http://localhost:8080/players/6a7790add6db9c706fe88b15
+
+### Create an invalid match - validation test
+POST http://localhost:8080/matches
+Content-Type: application/json
+
+{
+  "tournament": "invalid-id",
+  "homeTeam": "6a779080d6db9c706fe88b14",
+  "awayTeam": "6a779080d6db9c706fe88b14",
+  "matchDate": "not-a-date",
+  "venue": "",
+  "round": "",
+  "status": "finished",
+  "homeScore": -1,
+  "awayScore": -2
+}
+
+### Create a valid match
+POST http://localhost:8080/matches
+Content-Type: application/json
+
+{
+  "tournament": "6a77953d67a62682754c49f1",
+  "homeTeam": "6a779080d6db9c706fe88b14",
+  "awayTeam": "6a7794f667a62682754c49f0",
+  "matchDate": "2026-09-15T20:00:00.000Z",
+  "venue": "Centenario Stadium",
+  "round": "Group Stage - Round 1",
+  "status": "scheduled",
+  "homeScore": 0,
+  "awayScore": 0
+}
+
+### Get match by ID
+GET http://localhost:8080/matches/6a77954867a62682754c49f2
+
+### Update match
+PUT http://localhost:8080/matches/6a77954867a62682754c49f2
+Content-Type: application/json
+
+{
+  "tournament": "6a77953d67a62682754c49f1",
+  "homeTeam": "6a779080d6db9c706fe88b14",
+  "awayTeam": "6a7794f667a62682754c49f0",
+  "matchDate": "2026-09-15T20:00:00.000Z",
+  "venue": "Centenario Stadium",
+  "round": "Group Stage - Round 1",
+  "status": "completed",
+  "homeScore": 2,
+  "awayScore": 1
+}
+
+### Delete match
+DELETE http://localhost:8080/matches/6a77954867a62682754c49f2
+
+### Test protected player route without login
+POST http://localhost:8080/players
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "Player",
+  "dateOfBirth": "2000-01-01",
+  "nationality": "Uruguay",
+  "position": "forward",
+  "shirtNumber": 10,
+  "team": "6a779080d6db9c706fe88b14",
+  "status": "active"
+}
+
+### Test protected match route without login
+POST http://localhost:8080/matches
+Content-Type: application/json
+
+{}

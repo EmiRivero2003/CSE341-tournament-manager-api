@@ -3,7 +3,7 @@
   "info": {
     "title": "Tournament Manager API",
     "version": "1.0.0",
-    "description": "REST API for managing football tournaments and teams.",
+    "description": "REST API for managing football tournaments, teams, players, and matches.",
     "contact": {
       "name": "Emiliano Rivero"
     }
@@ -16,15 +16,94 @@
   ],
   "tags": [
     {
+      "name": "Authentication",
+      "description": "Google OAuth authentication and session operations"
+    },
+    {
       "name": "Tournaments",
       "description": "Tournament CRUD operations"
     },
     {
       "name": "Teams",
       "description": "Team CRUD operations"
+    },
+    {
+      "name": "Players",
+      "description": "Player CRUD operations"
+    },
+    {
+      "name": "Matches",
+      "description": "Match CRUD operations"
     }
   ],
   "paths": {
+    "/auth/google": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Log in with Google",
+        "description": "Starts Google OAuth authentication. Open this route directly in the browser.",
+        "responses": {
+          "302": {
+            "description": "Redirects the user to Google"
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get the authenticated user",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated user returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Log out",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
     "/tournaments": {
       "get": {
         "tags": ["Tournaments"],
@@ -306,9 +385,335 @@
           }
         }
       }
+    },
+    "/players": {
+      "get": {
+        "tags": ["Players"],
+        "summary": "Get all players",
+        "responses": {
+          "200": {
+            "description": "Player list returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Player"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Players"],
+        "summary": "Create a player",
+        "description": "Requires an authenticated Google session.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayerInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Player created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/players/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/DocumentId"
+        }
+      ],
+      "get": {
+        "tags": ["Players"],
+        "summary": "Get a player by ID",
+        "responses": {
+          "200": {
+            "description": "Player returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Players"],
+        "summary": "Update a player",
+        "description": "Requires an authenticated Google session.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayerInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Player updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Players"],
+        "summary": "Delete a player",
+        "responses": {
+          "200": {
+            "description": "Player deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matches": {
+      "get": {
+        "tags": ["Matches"],
+        "summary": "Get all matches",
+        "responses": {
+          "200": {
+            "description": "Match list returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Matches"],
+        "summary": "Create a match",
+        "description": "Requires an authenticated Google session.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Match created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matches/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/DocumentId"
+        }
+      ],
+      "get": {
+        "tags": ["Matches"],
+        "summary": "Get a match by ID",
+        "responses": {
+          "200": {
+            "description": "Match returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Matches"],
+        "summary": "Update a match",
+        "description": "Requires an authenticated Google session.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Match updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Matches"],
+        "summary": "Delete a match",
+        "responses": {
+          "200": {
+            "description": "Match deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
     }
   },
   "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid",
+        "description": "Session cookie created after Google OAuth authentication"
+      }
+    },
     "parameters": {
       "DocumentId": {
         "name": "id",
@@ -357,12 +762,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "scheduled",
-              "active",
-              "completed",
-              "cancelled"
-            ],
+            "enum": ["scheduled", "active", "completed", "cancelled"],
             "example": "active"
           },
           "organizer": {
@@ -384,20 +784,7 @@
             "$ref": "#/components/schemas/TournamentInput"
           },
           {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "updatedAt": {
-                "type": "string",
-                "format": "date-time"
-              }
-            }
+            "$ref": "#/components/schemas/DatabaseFields"
           }
         ]
       },
@@ -456,28 +843,221 @@
             "$ref": "#/components/schemas/TeamInput"
           },
           {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "updatedAt": {
-                "type": "string",
-                "format": "date-time"
-              }
-            }
+            "$ref": "#/components/schemas/DatabaseFields"
           }
         ]
+      },
+      "PlayerInput": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "dateOfBirth",
+          "nationality",
+          "position",
+          "shirtNumber",
+          "team"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "example": "Federico"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "example": "Valverde"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date",
+            "example": "1998-07-22"
+          },
+          "nationality": {
+            "type": "string",
+            "example": "Uruguay"
+          },
+          "position": {
+            "type": "string",
+            "enum": ["goalkeeper", "defender", "midfielder", "forward"],
+            "example": "midfielder"
+          },
+          "shirtNumber": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 99,
+            "example": 8
+          },
+          "team": {
+            "type": "string",
+            "description": "Team MongoDB ID",
+            "example": "64f1234567890abcdef12345"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "injured", "suspended", "inactive"],
+            "default": "active",
+            "example": "active"
+          }
+        }
+      },
+      "Player": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PlayerInput"
+          },
+          {
+            "$ref": "#/components/schemas/DatabaseFields"
+          }
+        ]
+      },
+      "MatchInput": {
+        "type": "object",
+        "required": [
+          "tournament",
+          "homeTeam",
+          "awayTeam",
+          "matchDate",
+          "venue",
+          "round",
+          "status"
+        ],
+        "properties": {
+          "tournament": {
+            "type": "string",
+            "description": "Tournament MongoDB ID",
+            "example": "64f1234567890abcdef12345"
+          },
+          "homeTeam": {
+            "type": "string",
+            "description": "Home team MongoDB ID",
+            "example": "64f1234567890abcdef12346"
+          },
+          "awayTeam": {
+            "type": "string",
+            "description": "Away team MongoDB ID. It must be different from homeTeam.",
+            "example": "64f1234567890abcdef12347"
+          },
+          "matchDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-09-15T20:00:00.000Z"
+          },
+          "venue": {
+            "type": "string",
+            "example": "Centenario Stadium"
+          },
+          "round": {
+            "type": "string",
+            "example": "Group Stage - Round 1"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "in_progress",
+              "completed",
+              "postponed",
+              "cancelled"
+            ],
+            "example": "scheduled"
+          },
+          "homeScore": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "example": 0
+          },
+          "awayScore": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "example": 0
+          }
+        }
+      },
+      "Match": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MatchInput"
+          },
+          {
+            "$ref": "#/components/schemas/DatabaseFields"
+          }
+        ]
+      },
+      "DatabaseFields": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "64f1234567890abcdef12345"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Emiliano Rivero"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "photo": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        }
+      },
+      "AuthProfile": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Authenticated successfully."
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUser"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
       },
       "Error": {
         "type": "object",
         "properties": {
           "message": {
             "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         }
       }
@@ -489,6 +1069,19 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "Authentication required."
             }
           }
         }
