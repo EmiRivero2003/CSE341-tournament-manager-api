@@ -74,6 +74,19 @@ app.use((req, res) => {
   });
 });
 
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error(error);
+
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  return res.status(500).json({
+    message: 'Internal server error.'
+  });
+});
+
 const startServer = async () => {
   await connectDB();
 
